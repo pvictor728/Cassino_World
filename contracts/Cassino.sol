@@ -3,8 +3,16 @@ pragma solidity ^0.8.0;
 
 contract Cassino {
 
-    address public owner;
+    struct Jogador {
+        address endereco;
+        string nome;
+        uint idade;
+        mapping(string => uint) fichas;
+    }
 
+    address public owner;
+    mapping(address => Jogador) public jogadores;
+    uint controlejogadores = 0;
     uint public immutable fichade1 = 0.00016 ether;
     uint public immutable fichade5 = 0.00078 ether;
     uint public immutable fichade10 = 0.0016 ether;
@@ -12,9 +20,9 @@ contract Cassino {
     uint public immutable fichade50 = 0.0078 ether;
     uint public immutable fichade100 = 0.016 ether;
     
-    mapping (uint => uint) fichas;
-
+    event CadastroRealizado(string nome, uint controlejogadores);
     event FichasCompradas(address pessoa, uint quntidade);
+    event valorFichasResgatadas(Jogador pessoa, uint quantidade);
     event RodadaVencida(); //aqui é para os jogos,n irá ficar aqui
 
     constructor() public{
@@ -22,12 +30,30 @@ contract Cassino {
     }
     
 	modifier onlyOwner {
-		require(msg.sender == owner, "Somento o dono do cassino pode executar essa funcao!");
+		require(msg.sender == owner.endereco, "Somento o dono do cassino pode executar essa funcao!");
 		_;
 	}
 
+    function cadastrar(string nome, uint idade) public {
+        require(idade >= 18, "Idade nao permitida para se cadastrar no cassino.");
+        Jogador j = Jogador(msg.sender, nome, idade);
+        j.fichas[fichade1] = 0;
+        j.fichas[fichade5] = 0;
+        j.fichas[fichade10] = 0;
+        j.fichas[fichade20] = 0;
+        j.fichas[fichade50] = 0;
+        j.fichas[fichade100] = 0;
+        jogadores[msg.sender] = j;
+        controlejogadores += 1;
+        emit CadastroRealizado(nome, controlejogadores);
+    }
+
+    function verFluxoJogadores() public view onlyOwner{
+        return controlejogadores;
+    }
+
     function mostrarValoresFichas() public view returns (string){
-        return "Ficha de 1 = 0.0016 ether"
+        return "Ficha de 1 = 0.00016 ether"
         "Ficha de 5 = 0.00078 ether"
         "Ficha de 10 = 0.0016 ether"
         "Ficha de 20 = 0.0031 ether"
@@ -38,18 +64,24 @@ contract Cassino {
     function ComprarFichas() public payable{
         require(msg.value >= fichade1, "Dinheiro insuficiente para comprar fichas!");
         uint8 fichas100 = msg.value / 0.016;
-        fichas[fichade100] = fichas100;
+        jogadores[msg.sender].fichas[fichade100] += fichas100;
+        //saldoemfichas += 0.016 * fichas100;
         uint8 fichas50 = (msg.value % 0.016) / 0.0078;
-        fichas[fichade50] = fichas50;
+        jogadores[msg.sender].fichas[fichade50] += fichas50;
+        //saldoemfichas += 0.0078 * fichas50;
         uint8 fichas20 = ((msg.value % 0.016) % 0.0078) / 0.0031;
-        fichas[fichade20] = fichas20;
-        uint8 fichas10 = (((msg.value % 0.016) % 0.0078) % 0.0031) / 0.0016;  
-        fichas[fichade10] = fichas10;
+        jogadores[msg.sender].fichas[fichade20] += fichas20;
+        //saldoemfichas += 0.0031 * fichas20;
+        uint8 fichas10 = (((msg.value % 0.016) % 0.0078) % 0.0031) / 0.0016;
+        jogadores[msg.sender].fichas[fichade10] += fichas10;
+        //saldoemfichas += 0.0016 * fichas10;
         uint8 fichas5 = ((((msg.value % 0.016) % 0.0078) % 0.0031) % 0.0016) / 0.00078;
-        fichas[fichade5] = fichas5;
-        uint8 fichas1 = (((((msg.value % 0.016) % 0.0078) % 0.0031) % 0.0016) % 0.00078) / 0.0016;
-        fichas[fichade1] = fichas1;
-        emit FichasCompradas(msg.sender, msg.value);
+        jogadores[msg.sender].fichas[fichade5] += fichas5;
+        //saldoemfichas += 0.00078 * fichas5;
+        uint8 fichas1 = (((((msg.value % 0.016) % 0.0078) % 0.0031) % 0.0016) % 0.00078) / 0.00016;
+        jogadores[msg.sender].fichas[fichade1] += fichas1;
+        //saldoemfichas += 0.00016 * fichas1;
+        emit FichasCompradas(jogadores[msg.sender].nome, msg.value);
     }
 
     function MostrarBalanco() public view onlyOwner returns(uint){
@@ -61,19 +93,35 @@ contract Cassino {
         require(msg.sender == owner, "Somente o dono do cassino pode fechar a casa");
         msg.sender.transfer(address(this).balance);
     }
+
+    function resgatarValorFichas() public {
+        uint saldo = jogadores[msg.sender].fichas[fichade100] * 0.016 ether;
+        saldo += jogadores[msg.sender].fichas[fichade50] * 0.0078 ether;
+        saldo += jogadores[msg.sender].fichas[fichade20] * 0.0031 ether;
+        saldo += jogadores[msg.sender].fichas[fichade10] * 0.0016 ether;
+        saldo += jogadores[msg.sender].fichas[fichade5] * 0.00078 ether;
+        saldo += jogadores[msg.sender].fichas[fichade1] * 0.00016 ether;
+
+        msg.sender.transfer(saldo);
+
+        //Retirando as fichas do jogadr após a transacao
+        jogadores[msg.sender].fichas[fichade100] = 0;
+        saldo += jogadores[msg.sender].fichas[fichade50] = 0;
+        saldo += jogadores[msg.sender].fichas[fichade20] = 0;
+        saldo += jogadores[msg.sender].fichas[fichade10] = 0;
+        saldo += jogadores[msg.sender].fichas[fichade5] = 0;
+        saldo += jogadores[msg.sender].fichas[fichade1] = 0;
+    }
 }
 
 
-contract  SlotMachine {
+contract  SlotMachine is Cassino {
     
     enum simbolos {Uva, Melancia, Morango, Chocolate, Cerveja, Sorvete, Pizza}
 
     simbolos Slot1;
     simbolos slot2;
     simbolos slot3;
-
-    address public jogador;
-    address payable owner;
 
     uint saldoMaquina;
 
