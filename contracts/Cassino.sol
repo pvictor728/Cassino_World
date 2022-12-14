@@ -10,7 +10,7 @@ contract Cassino {
         uint amount;
     }
 
-
+    uint precoRodada = 0.001 ether;
     address  owner;
     mapping(address => Jogador) jogadores;
     uint controlejogadores = 0;
@@ -39,7 +39,7 @@ contract Cassino {
         require(msg.sender != owner, "Dono do cassino nao pode se cadastrar");
         require(cadastroFeito == false, "Usuario ja esta acadastrado");
         require(idade >= 18, "Idade nao permitida para se cadastrar no cassino.");
-        jogadores[msg.sender] = Jogador(msg.sender, _nome, idade, 0);
+        jogadores[msg.sender] = Jogador(msg.sender, _nome, idade, 0 ether);
         controlejogadores += 1;
         cadastroFeito = true;
         emit CadastroRealizado(_nome, msg.sender);
@@ -55,17 +55,18 @@ contract Cassino {
     }
 
     function depositar() public payable{
-        require(casaAberta == true, "Operacao indisponivel, cassino esta fechado");
+        require(msg.sender != owner, "Operacao negada");
         require(cadastroFeito == true, "Voce ainda nao possui uma conta, cadastre-se");
         jogadores[msg.sender].amount += msg.value;
         emit DepositoRealizado(msg.sender, msg.value);
     }
 
     function sacar(uint valorsaque) public{
-        require(casaAberta == true, "Operacao indisponivel, cassino esta fechado");
+        require(msg.sender != owner, "Operacao negada");
         require(cadastroFeito == true, "Voce ainda nao possui uma conta, cadastre-se");
         require(jogadores[msg.sender].amount >= valorsaque, "Saldo insuficiente");
         msg.sender.transfer(valorsaque);
+        jogadores[msg.sender].amount -= valorsaque;
         emit SaqueRealizado(msg.sender, valorsaque);
     }
 
@@ -80,17 +81,24 @@ contract Cassino {
         return jogadores[msg.sender].amount;
     }
 
+    function verPrecodeJogo() public view returns(uint){
+        return precoRodada;
+    }
+
     function fecharCasa() public onlyOwner {  
         require(msg.sender == owner, "Somente o dono do cassino pode fechar a casa");
         msg.sender.transfer(saldoCassino);
         casaAberta = false;
         saldoCassino = 0;
-        //selfdestruct(owner);
         emit CasaEncerrada();
     }
 
     function abrirCasa() public onlyOwner {
         require(casaAberta == false, "O cassino ja esta aberto e operando");
         casaAberta = true;
+    }
+
+    function mudarPrecoRodada(uint _tourPrice) public onlyOwner {
+        precoRodada = _tourPrice;
     }
 }

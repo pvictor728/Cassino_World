@@ -10,11 +10,9 @@ contract  SlotMachine is Cassino {
     event Draw(address jogador, uint quantidade);
     event MaquinaGirada(string nome, address sender, uint slot1, uint slot2, uint slot3);
     
-    uint256 public precoRodada = 0.01 ether;
-    
     
     //the user plays one roll of the machine putting in money for the win
-    function girarMaquina() public{
+    function jogarSlotMachine() public{
         require(msg.sender != owner, "Dono do cassino nao pode realizar essa operacao");
         require(casaAberta == true, "Operacao negada, cassino fechado");
         require(jogadores[msg.sender].amount >= precoRodada, "Saldo insuficiente do jogador para jogar");
@@ -57,9 +55,5 @@ contract  SlotMachine is Cassino {
         } else {
             return 0;
         }
-    }
-    
-    function mudarPrecoRodada(uint _tourPrice) public onlyOwner {
-        precoRodada = _tourPrice;
     }
 }

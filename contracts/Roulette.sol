@@ -5,7 +5,7 @@ import "./SlotMachine.sol";
 
 contract Roulette is SlotMachine {
   
-  uint precoRodada = 0.01 ether;
+  
   uint saldoNecessario = 0;
   uint momentoAposta = now;
   mapping (address => uint256) vencedores;
@@ -28,36 +28,46 @@ contract Roulette is SlotMachine {
     uint8 number;
   }
 
-  Bet[] public bets;
+  Bet[] bets;
   
   event RandomNumber(uint256 number);
   
-  function statusApostas() public view returns(uint, uint, uint, uint, uint) {
-    require(msg.sender != owner,"Acao negada");
+  function statusApostas() public view returns(uint, uint, uint, uint) {
+    require(bets.length > 0, "Sem apostas disponiveis");
     return (
         bets.length,             // numero de apostas ativas
         bets.length * precoRodada, // valor de apostas ativas
-        momentoAposta,      // quando podemos jogar novamente
-        saldoCassino,   // saldo da casa
-        vencedores[msg.sender]     // vencedores do jogo
+        momentoAposta,      // quando podem jogar novamente
+        vencedores[msg.sender]   // quantidade de vitórias
     );}
 
   function criarAposta(uint8 number, uint8 betType) public {
     /* 
        Aposta válida quando:
-       1 - o valor da aposta está correto (=precoRodada)
+       1 - É um jogador
+       2 - Casa aberta
+       3 - Jogador cadastrado
+       1 - Jogador pode pagar pelo preco da rodada
        2 - betType é conhecido (entre 0 e 5)
        3 - O numero apostado é valido
        4 - A casa tem fundos suficientes para pagar o debito
     */
-    require(jogadores[msg.sender].amount >= precoRodada,"Saldo insuficiente");                               // 1
-    require(betType >= 0 && betType <= 5);                         // 2
-    require(number >= 0 && number <= 36);        // 3
+    require(msg.sender != owner, "Operacao negada");
+    require(casaAberta == true, "Casa fechada para apostas");
+    require(cadastroFeito == true, "Cadastre-se antes");
+    require(jogadores[msg.sender].amount >= precoRodada,"Saldo insuficiente");                               
+    require(betType >= 0 && betType <= 5);                        
+    require(number >= 0 && number <= 36);       
     uint valorAposta = payouts[betType] * precoRodada;
-    uint balancoProvisorio = saldoNecessario + valorAposta;
-    require(balancoProvisorio < saldoCassino,"A casa nao possui saldo suficiente para suportar essa aposta");           // 4
+    //Com o valor da aposta, cria uma estimativa dos valores das apostas a serem pagas
+    /*Se com essa nova aposta o montante que a casa deve pagar aos jogadores for maior que o saldo
+    que a casa tem, então essa nova aposta será recusada. Se for aprovada, então ela será inserida
+    nas apostas a serem pagas*/
+    uint estimativaDoBalancoProvisorio = saldoNecessario + valorAposta;
+    require(saldoCassino > estimativaDoBalancoProvisorio,"A casa nao possui saldo suficiente para suportar essa aposta");           
 
     saldoNecessario += valorAposta;
+
     bets.push(Bet({
       betType: betType,
       player: msg.sender,
@@ -65,7 +75,13 @@ contract Roulette is SlotMachine {
     }));
   }
 
-  function rodarRoleta() public {
+  function jogarRoleta() public {
+    //O dono apenas administra
+    require(msg.sender != owner, "Operacao negada");
+    //Verifica se a casa está fechada ou aberta
+    require(casaAberta == true, "Casa fechada para apostas");
+    //Jogador precisa se cadastrar antes
+    require(cadastroFeito == true, "Cadastre-se antes");
     //Verificar se existe apostas feitas
     require(bets.length > 0,"Nenhuma aposta feita");
     //Verificar se epossivel rodar a roleta nesse momento
@@ -108,7 +124,7 @@ contract Roulette is SlotMachine {
             } else {
               vitoria = (number % 2 == 1);
             }
-          } else {                                                 /* bet on red */
+          } else {                                                 /* apostou no vermelho */
             if (number <= 10 || (number >= 20 && number <= 28)) {
               vitoria = (number % 2 == 1);
             } else {
