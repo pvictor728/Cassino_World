@@ -10,11 +10,11 @@ contract Cassino {
         uint amount;
     }
 
-    uint precoRodada = 0.001 ether;
+    uint precoRodada = 0.0001 ether;
     address  owner;
     mapping(address => Jogador) jogadores;
     uint controlejogadores = 0;
-    uint saldoCassino;
+    uint saldoCassino = 0 ether;
     bool cadastroFeito = false;
     bool casaAberta = true;
 
@@ -62,6 +62,7 @@ contract Cassino {
     }
 
     function sacar(uint valorsaque) public{
+        valorsaque = valorsaque * (1 ether);
         require(msg.sender != owner, "Operacao negada");
         require(cadastroFeito == true, "Voce ainda nao possui uma conta, cadastre-se");
         require(jogadores[msg.sender].amount >= valorsaque, "Saldo insuficiente");
@@ -89,7 +90,7 @@ contract Cassino {
         require(msg.sender == owner, "Somente o dono do cassino pode fechar a casa");
         msg.sender.transfer(saldoCassino);
         casaAberta = false;
-        saldoCassino = 0;
+        saldoCassino = 0 ether;
         emit CasaEncerrada();
     }
 

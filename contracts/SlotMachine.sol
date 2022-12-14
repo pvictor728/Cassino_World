@@ -9,7 +9,7 @@ contract  SlotMachine is Cassino {
     event Lose(address jogador, uint quantidade);
     event Draw(address jogador, uint quantidade);
     event MaquinaGirada(string nome, address sender, uint slot1, uint slot2, uint slot3);
-    
+    bool  public venceuSlotMachine = false;
     
     //the user plays one roll of the machine putting in money for the win
     function jogarSlotMachine() public{
@@ -27,13 +27,14 @@ contract  SlotMachine is Cassino {
         saldoCassino -= premio;
         emit MaquinaGirada(jogadores[msg.sender].nome, jogadores[msg.sender].endereco, slot1, slot2, slot3);
         if (premio == 0){
+            venceuSlotMachine = false;
             emit Lose(jogadores[msg.sender].endereco, precoRodada);
-        }else if(premio == precoRodada){
-            emit Draw(jogadores[msg.sender].endereco, precoRodada);
         }else{
+            venceuSlotMachine = true;
             emit Victory(jogadores[msg.sender].endereco, premio); 
         }
     }
+
     
     function calcularPremio(uint slot1, uint slot2, uint slot3) internal view returns (uint) {
         if (slot1 == 0 && slot2 == 0 && slot3 == 0){
@@ -50,8 +51,6 @@ contract  SlotMachine is Cassino {
             return precoRodada * 10;
         } else if (slot1 == 1 && slot2 == 1 && slot3 == 1) {
             return precoRodada * 5;
-        } else if ((slot1 == slot2) || (slot1 == slot3) || (slot2 == slot3)) {
-            return precoRodada;
         } else {
             return 0;
         }

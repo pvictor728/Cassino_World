@@ -11,6 +11,7 @@ contract Roulette is SlotMachine {
   mapping (address => uint256) vencedores;
   uint8[] payouts = [2,3,3,2,2,36]; //os multiplicadores para cada tipo de aposta
   uint8[] numberRange = [1,2,2,1,1,36];
+  bool public venceuRoulette = false;
   
   /*
     BetTypes:
@@ -89,11 +90,11 @@ contract Roulette is SlotMachine {
     momentoAposta = now;
 
     // Gerando numero aleatorio
-    uint diff = block.difficulty;
-    bytes32 hash = blockhash(block.number-1);
-    Bet memory lb = bets[bets.length-1];
-    uint number = uint(keccak256(abi.encodePacked(now, diff, hash, lb.betType, lb.player, lb.number))) % 37;
-    
+    //uint diff = block.difficulty;
+    //bytes32 hash = blockhash(block.number-1);
+    //Bet memory lb = bets[bets.length-1];
+    //uint number = uint(keccak256(abi.encodePacked(now, diff, hash, lb.betType, lb.player, lb.number))) % 37;
+    uint number = uint(keccak256(abi.encodePacked(now, msg.sender))) % 37;
     //criando os casos de vitoria para o numero escolhido
     for (uint i = 0; i < bets.length; i++) {
       bool vitoria = false;
@@ -105,18 +106,18 @@ contract Roulette is SlotMachine {
           vitoria = (b.number == number);                              /* apostou no numero */
         } else if (b.betType == 4) {
           if (b.number == 0) vitoria = (number % 2 == 0);              /* apostou nos pares */
-          if (b.number == 1) vitoria = (number % 2 == 1);              /* apostou nos ímpares */
+          else if (b.number == 1) vitoria = (number % 2 == 1);              /* apostou nos ímpares */
         } else if (b.betType == 3) {            
           if (b.number == 0) vitoria = (number <= 18);                 /* apostou na primeira metade dos numeros */
-          if (b.number == 1) vitoria = (number >= 19);                 /* apostou na segunda metade dos numeros */
+          else if (b.number == 1) vitoria = (number >= 19);                 /* apostou na segunda metade dos numeros */
         } else if (b.betType == 2) {                               
           if (b.number == 0) vitoria = (number <= 12);                 /* apostou na primeira duzia */
-          if (b.number == 1) vitoria = (number > 12 && number <= 24);  /* apostou na segunda duzia */
-          if (b.number == 2) vitoria = (number > 24);                  /* apostou na terceira duzia */
+          else if (b.number == 1) vitoria = (number > 12 && number <= 24);  /* apostou na segunda duzia */
+          else if (b.number == 2) vitoria = (number > 24);                  /* apostou na terceira duzia */
         } else if (b.betType == 1) {               
           if (b.number == 0) vitoria = (number % 3 == 1);              /* apostou nos numerais da coluna esquerda */
-          if (b.number == 1) vitoria = (number % 3 == 2);              /* apostou nos numerais da coluna direita */
-          if (b.number == 2) vitoria = (number % 3 == 0);              /* apostou nos numerais da coluna do meio */
+          else if (b.number == 1) vitoria = (number % 3 == 2);              /* apostou nos numerais da coluna direita */
+          else if (b.number == 2) vitoria = (number % 3 == 0);              /* apostou nos numerais da coluna do meio */
         } else if (b.betType == 0) {
           if (b.number == 0) {                                     /* apostou no preto */
             if (number <= 10 || (number >= 20 && number <= 28)) {
@@ -135,8 +136,13 @@ contract Roulette is SlotMachine {
       }
       /* Se houver vitória, a aposta é retornada ao ganhador e estorquida da casa imediatamente */
       if (vitoria) {
+        venceuSlotMachine = true;
         jogadores[b.player].amount += precoRodada * payouts[b.betType];
         saldoCassino -= precoRodada * payouts[b.betType];
+      }else{
+        jogadores[b.player].amount -= precoRodada * payouts[b.betType];
+        saldoCassino += precoRodada * payouts[b.betType];
+        venceuSlotMachine = false;
       }
     }
     /* Apaga as apostas */
