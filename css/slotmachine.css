@@ -1,0 +1,54 @@
+#slot-machine{
+	border-radius: 5px;
+	background-color: #3889c4;
+	margin-top: 30px;
+	padding: 20px;
+	width: 500px;
+	margin: auto;
+	text-align: center;
+}
+h2#title{
+	color: white;
+	font-size: 26px;
+	text-align: center;
+	padding:10px;
+}
+
+section.slots{
+	display: flex;
+	justify-content: space-around;
+	border-radius: 15px;
+	background-color: #FAFAFA;
+	padding: 20px;
+}
+
+#button-slot{
+	color: white;
+	font-size: 26px;
+	text-align: center;
+	margin-top: 25px;
+	padding: 20px;
+	background-color: #ffc83d;
+	border: 1px solid #3889c4;
+	border-radius: 10px;
+	cursor: pointer;
+}
+.icons{
+	font-size: 50px;
+	text-align: center;
+	margin:10px;
+}
+
+#button-slot:hover{
+	background-color: #16486c;
+}
+
+div#result{
+	width: 300px;
+	margin: 10px auto;
+	border: 1px solid #87c6f4;
+	border-radius: 15px;
+	background-color: #87c6f4;
+	padding: 10px;
+}
+

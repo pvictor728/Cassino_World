@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Virtual Cassino</title>
+    <link href="https://fonts.googleapis.com/css?family=Open Sans:400,700" rel="stylesheet" type="text/css" />
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link rel="shortcut icon" href="/images/logo.png" type="image/x-icon">
+    <link rel="icon" href="/images/logo.png" type="image/x-icon">
+</head>
+
+<body class="bg-light">
+    <div class="container">
+        <div class="py-5 text-center">
+            <h1>CApp</h1>
+            <p class="lead">
+                Tenha a oportunidade de ganhar dinheiro fácil!!
+            </p>
+        </div>
+        <form action="action_page.php">
+            <link href="css/registro.css" rel="stylesheet" type="text/css" />
+            <div class="container">
+                <h1>Cadastro</h1>
+                <hr>
+
+                <label for="name"><b>Nome</b></label>
+                <input type="text" placeholder="Insira seu nome" name="name" id="name" required>
+
+                <label for="age"><b>Idade</b></label><br/>
+                <input type="number" placeholder="Insira sua idade" name="age" id="age" required>
+                <p>
+                <p>Cadastrando-se, você concorda com nossos <a href="#">Termos</a>.</p>
+                <p></p>
+                <button type="button" id="btnRegistro" class="btn btn-danger">Cadastrar</button>
+            </div>
+
+            <div class="container">
+              <center><div id="result">Cadastre-se</div></center>
+            </div>
+            
+            <div class="row">
+              <table class="table">
+                  <thead>
+                      <tr>
+                          <th style="text-align: center;" scope="col" colspan="4">Interação - Cassino</th>
+                      </tr>
+                  </thead>
+                  <tbody id="events" class="small text-center">
+                  </tbody>
+              </table>
+            </div>
+        </form>
+
+        <body class="bg-light">
+          <div class="container">
+            <div class="row">
+              <div class="col-md order-md mb">
+                <ul class="list-group mb-3">
+                  <li
+                    class="list-group-item d-flex justify-content-between lh-condensed"
+                  >
+                    <div>
+                      <h6 class="my-0">Endereço do dono</h6>
+                      <span class="text-muted" id="endereco">-</span>
+                    </div>
+                    
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between lh-condensed"
+                  >
+                    <div>
+                      <h6 class="my-0">Saldo do Cassino</h6>
+                      <span class="text-muted" id="mostrarBalancoCasa">-</span>
+                    </div>    
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between lh-condensed"
+                  >
+                    <div>
+                      <h6 class="my-0">Fluxo de jogadores no site</h6>
+                      <span class="text-muted" id="controlejogadores">-</span>
+                    </div>
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between lh-condensed"
+                  >
+                    <div>
+                      
+                      <h6 class="my-0">Preço dos jogos</h6>
+                      <span class="text-muted" id="precoRodada">-</span>
+                    </div> 
+                  </li>
+                  <li
+                    class="list-group-item d-flex justify-content-between lh-condensed"
+                  >
+                    <div>
+                      
+                      <h6 class="my-0">Casa aberta</h6>
+                      <span class="text-muted" id="casaAberta">-</span>
+                    </div> 
+                  </li>
+                </ul>
+                <button type="button" class="btn btn-primary btn-lg" id = "bntAbrirCasa">Abrir Casa</button>
+                <button type="button" class="btn btn-secondary btn-lg" id = "bntFecharCasa">Fechar Casa</button>
+
+                <p></p>
+
+                <form class="card p-2">
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="NovoPreco"
+                      placeholder="Novo Preço"
+                    />
+                    <div class="input-group-append">
+                      <button type="button" id="btnmudarPrecoRodada" class="btn btn-success">Inserir novo valor dos jogos</button>
+                    </div>
+                  </div>
+                </form>
+                <br>
+                <form class="card p-2">
+                  <div class="input-group">
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="quantidade"
+                      placeholder="Quantidade"
+                    />
+                    <div class="input-group-append">
+                      <button type="button" id="btnDepositar" class="btn btn-info">Injetar dinheiro no Cassino</button>
+                    </div>
+                  </div>
+                </form>
+                <br />
+
+                <div class="row">
+                  <table class="table">
+                      <thead>
+                          <tr>
+                              <th style="text-align: center;" scope="col" colspan="4">Interação - Jogador</th>
+                          </tr>
+                      </thead>
+                      <tbody id="events" class="small text-center">
+                      </tbody>
+                  </table>
+                </div>
+            </form>
+    
+            <body class="bg-light">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md order-md mb">
+                    <ul class="list-group mb-3">
+                      <li
+                        class="list-group-item d-flex justify-content-between lh-condensed"
+                      >
+                        <div>
+                          <h6 class="my-0">Endereço do Jogador</h6>
+                          <span class="text-muted" id="enderecojogador">-</span>
+                        </div>
+                        
+                      </li>
+                      <li
+                        class="list-group-item d-flex justify-content-between lh-condensed"
+                      >
+                        <div>
+                          <h6 class="my-0">Nome</h6>
+                          <span class="text-muted" id="nomeJogador">-</span>
+                        </div>    
+                      </li>
+                      <li
+                        class="list-group-item d-flex justify-content-between lh-condensed"
+                      >
+                        <div>
+                          <h6 class="my-0">Saldo</h6>
+                          <span class="text-muted" id="saldojogador">-</span>
+                        </div>
+                      </li>
+                    </ul>
+    
+                    <form class="card p-2">
+                      <div class="input-group">
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="Depositar"
+                          placeholder="Insira o valor que deseja depositar"
+                        />
+                        <div class="input-group-append">
+                          <button type="button" id="btnDepositarJogador" class="btn btn-success">Depositar</button>
+                        </div>
+                      </div>
+                    </form>
+                    <br>
+                    <form class="card p-2">
+                      <div class="input-group">
+                        <input
+                          type="number"
+                          class="form-control"
+                          id="Sacar"
+                          placeholder="Insira o valor que deseja sacar"
+                        />
+                        <div class="input-group-append">
+                          <button type="button" id="btnSacarJogador" class="btn btn-info">Sacar</button>
+                        </div>
+                      </div>
+                    </form>
+                    <br />
+                
+              </div>
+            </div>
+            <br>     
+          </div>
+        
+        <div class="row">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th style="text-align: center;" scope="col" colspan="4"><strong>JOGOS DO CASSINO</strong></th>
+                    </tr>
+                </thead>
+                <tbody id="events" class="small text-center">
+                </tbody>
+            </table>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="row">
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th style="text-align: center;" scope="col" colspan="4">SLOT MACHINE</th>
+                  </tr>
+              </thead>
+              <tbody id="events" class="small text-center">
+              </tbody>
+          </table>
+      </div>
+        <div id="slot-machine">
+            <link href="css/slotmachine.css" rel="stylesheet" type="text/css" />
+            <h2 id="title">Slot Machine</h2>
+            <section class="slots">
+                <div id="slot1" class="icons">&nbsp;</div>
+                <div id="slot2" class="icons">&nbsp;</div>
+                <div id="slot3" class="icons">&nbsp;</div>
+            </section>
+            <button id="button-slot">Jogar</button>
+            <div id="result">Esperando o resultado</div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="row">
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th style="text-align: center;" scope="col" colspan="4">ROLETA AMERICANA</th>
+                  </tr>
+              </thead>
+              <tbody id="events" class="small text-center">
+              </tbody>
+          </table>
+      </div>
+
+      <div class="col-xs-4 col-sm-4 col-md-3">
+        <p><strong>Your bets:</strong></p>
+        <div id="betsList"></div>
+      </div>
+      
+      <div class="col-xs-8 col-sm-8 col-md-3 text-center">
+        <p>&#8595;<p>
+        <img id="wheel" src="images/wheel.png" />
+        <br /><br />
+        <button onclick="spinWheel()">Spin wheel</button>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-6">
+        <p>Click on the board to make your bet:<p>
+        <img id="layout" src="images/layout.png" usemap="#mapname" />
+        <map id="rouletteTable" name="mapname">
+          <area id="n00" shape="rect" coords="  7, 13, 40,149"> <!-- numbers (37) -->
+          <area id="n01" shape="rect" coords=" 40,104, 70,148">
+          <area id="n02" shape="rect" coords=" 40, 60, 70,104">
+          <area id="n03" shape="rect" coords=" 40, 16, 70, 60">
+          <area id="n04" shape="rect" coords=" 70,104,100,148">
+          <area id="n05" shape="rect" coords=" 70, 60,100,104">
+          <area id="n06" shape="rect" coords=" 70, 16,100, 60">
+          <area id="n07" shape="rect" coords="100,104,130,148">
+          <area id="n08" shape="rect" coords="100, 60,130,104">
+          <area id="n09" shape="rect" coords="100, 16,130, 60">
+          <area id="n10" shape="rect" coords="130,104,160,148">
+          <area id="n11" shape="rect" coords="130, 60,160,104">
+          <area id="n12" shape="rect" coords="130, 16,160, 60">
+          <area id="n13" shape="rect" coords="160,104,190,148">
+          <area id="n14" shape="rect" coords="160, 60,190,104">
+          <area id="n15" shape="rect" coords="160, 16,190, 60">
+          <area id="n16" shape="rect" coords="190,104,220,148">
+          <area id="n17" shape="rect" coords="190, 60,220,104">
+          <area id="n18" shape="rect" coords="190, 16,220, 60">
+          <area id="n19" shape="rect" coords="220,104,250,148">
+          <area id="n20" shape="rect" coords="220, 60,250,104">
+          <area id="n21" shape="rect" coords="220, 16,250, 60">
+          <area id="n22" shape="rect" coords="250,104,280,148">
+          <area id="n23" shape="rect" coords="250, 60,280,104">
+          <area id="n24" shape="rect" coords="250, 16,280, 60">
+          <area id="n25" shape="rect" coords="280,104,310,148">
+          <area id="n26" shape="rect" coords="280, 60,310,104">
+          <area id="n27" shape="rect" coords="280, 16,310, 60">
+          <area id="n28" shape="rect" coords="310,104,340,148">
+          <area id="n29" shape="rect" coords="310, 60,340,104">
+          <area id="n30" shape="rect" coords="310, 16,340, 60">
+          <area id="n31" shape="rect" coords="340,104,370,148">
+          <area id="n32" shape="rect" coords="340, 60,370,104">
+          <area id="n33" shape="rect" coords="340, 16,370, 60">
+          <area id="n34" shape="rect" coords="370,104,400,148">
+          <area id="n35" shape="rect" coords="370, 60,400,104">
+          <area id="n36" shape="rect" coords="370, 16,400, 60">
+          <area id="c_1" shape="rect" coords="160,181,220,213"> <!-- colors (2) -->
+          <area id="c_0" shape="rect" coords="220,181,280,213">
+          <area id="d_0" shape="rect" coords=" 40,148,160,181"> <!-- dozens (3) -->
+          <area id="d_1" shape="rect" coords="160,148,280,181">
+          <area id="d_2" shape="rect" coords="280,148,400,181">
+          <area id="e_0" shape="rect" coords=" 40,181,100,213"> <!-- eighteens (2) -->
+          <area id="e_1" shape="rect" coords="340,181,400,213">
+          <area id="m_0" shape="rect" coords="100,181,160,213"> <!-- modulus (2) -->
+          <area id="m_1" shape="rect" coords="280,181,340,213">
+          <area id="p_0" shape="rect" coords="400,104,430,148"> <!-- pilar/columns (3) -->
+          <area id="p_1" shape="rect" coords="400, 60,430,104">
+          <area id="p_2" shape="rect" coords="400, 16,430, 60">
+        </map>
+      </div>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <div class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th style="text-align: center;" scope="col" colspan="4">Status das apostas</th>
+                </tr>
+            </thead>
+            <tbody id="events" class="small text-center">
+            </tbody>
+        </table>
+      </div>
+  </form>
+
+  <body class="bg-light">
+    <div class="container">
+      <div class="row">
+        <div class="col-md order-md mb">
+          <ul class="list-group mb-3">
+            <li
+              class="list-group-item d-flex justify-content-between lh-condensed"
+            >
+              <div>
+                <h6 class="my-0">Numero de apostas ativas</h6>
+                <span class="text-muted" id="betsLength">-</span>
+              </div>
+              
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between lh-condensed"
+            >
+              <div>
+                <h6 class="my-0">Valor total das apostas ativas</h6>
+                <span class="text-muted" id="valorTotalApostas">-</span>
+              </div>    
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between lh-condensed"
+            >
+              <div>
+                <h6 class="my-0">Proxima Rodada</h6>
+                <span class="text-muted" id="momentoAposta">-</span>
+              </div>
+            </li>
+            <li
+              class="list-group-item d-flex justify-content-between lh-condensed"
+            >
+              <div>
+                <h6 class="my-0">Quantidade de vitorias individual</h6>
+                <span class="text-muted" id="vitoriasjogador">-</span>
+              </div>
+            </li>
+          </ul>
+
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.7.0/web3.min.js"></script>
+    <script src="js/abi.js"></script>
+    <script src="js/script.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/web3.min.js"></script>
+</body>
+
+</html>
